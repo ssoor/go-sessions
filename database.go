@@ -56,7 +56,7 @@ func (s *mem) Acquire(sid string, expires time.Duration) LifeTime {
 func (s *mem) Set(sid string, lifetime LifeTime, key string, value interface{}, immutable bool) {
 	s.mu.Lock()
 	s.values[sid].Save(key, value, immutable)
-	s.mu.Lock()
+	s.mu.Unlock()
 }
 
 func (s *mem) Get(sid string, key string) (result interface{}) {
