@@ -54,13 +54,16 @@ func (s *mem) Acquire(sid string, expires time.Duration) LifeTime {
 
 // immutable depends on the store, it may not implement it at all.
 func (s *mem) Set(sid string, lifetime LifeTime, key string, value interface{}, immutable bool) {
-	s.mu.RLock()
+	s.mu.Lock()
 	s.values[sid].Save(key, value, immutable)
-	s.mu.RUnlock()
+	s.mu.Lock()
 }
 
-func (s *mem) Get(sid string, key string) interface{} {
-	return s.values[sid].Get(key)
+func (s *mem) Get(sid string, key string) (result interface{}) {
+	s.mu.RLock()
+	result = s.values[sid].Get(key)
+	s.mu.RUnlock()
+	return
 }
 
 func (s *mem) Visit(sid string, cb func(key string, value interface{})) {
